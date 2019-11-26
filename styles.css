@@ -1,0 +1,121 @@
+.slides * {
+  text-align: left;
+}
+
+.affiliation,
+.contact {
+  margin-right: 40px;
+}
+.affiliation > *,
+.contact > * {
+  display: block;
+  text-align: right;
+}
+
+a,
+.code {
+  font-family: "Monaco";
+  color: papayawhip;
+  font-size: 80%;
+}
+
+.title-slide > * {
+  margin-bottom: 20px;
+  text-align: right;
+}
+
+.title-slide > h3 {
+  color: #42affa;
+}
+
+blockquote > .citation {
+  text-align: right;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.leader {
+  color: pink;
+  font-style: italic;
+}
+
+ul {
+  padding-left: 40px;
+}
+code.output {
+  background-color: #424242;
+}
+
+.points > * {
+  margin-bottom: 20px;
+  margin-left: 40px;
+}
+
+h3.slide-heading,
+h4.slide-heading {
+  color: #42affa;
+}
+
+.small {
+  font-size: 75%;
+}
+
+.center-horizontally {
+  display: flex;
+  justify-content: center;
+}
+
+pre.no-left-margin {
+  margin-left: 0px;
+}
+
+code {
+  line-height: 1.5;
+}
+
+em {
+  color: pink;
+  font-style: normal;
+}
+
+.line {
+  display: block;
+}
+.line.focus {
+  background: yellow;
+}
+
+.line.focus {
+  background: #fdf6e3;
+  color: #657b83;
+}
+.line.focus .hljs-comment,
+.line.focus .hljs-quote {
+  color: #93a1a1;
+}
+
+.reveal .slides section .fragment.current-only {
+  opacity: 1;
+  visibility: visible;
+  display: none;
+}
+.reveal .slides section .fragment.current-only.current-fragment {
+  display: block;
+}
+
+div.fake-code {
+  font-family: "Monaco";
+  background-color: #424242;
+  padding: 5px;
+  margin-left: 44px;
+  margin-right: 44px;
+  color: papayawhip;
+  font-size: 50%;
+  line-height: 1.75;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+span.fragment.highlight {
+  visibility: visible;
+}

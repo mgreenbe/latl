@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>DL with TF</title>
+
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/reveal.css" />
+    <link rel="stylesheet" href="css/theme/black.css" />
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css" />
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      link.href = window.location.search.match(/print-pdf/gi)
+        ? "css/print/pdf.css"
+        : "css/print/paper.css";
+      document.getElementsByTagName("head")[0].appendChild(link);
+    </script>
+
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section class="title-slide">
+          <h3>Deep learning with Tensorflow</h3>
+          <div class="affiliation">
+            <span>Matthew Greenberg</span>
+            <span>University of Calgary</span>
+            <span>Deptment of Mathematics and Statistics</span>
+          </div>
+          <div class="contact">
+            <a href="mailto:mgreenbe@ucalgary.ca">mgreenbe@ucalgary.ca</a>
+            <a href="https://mgreenbe.github.io/mruai2019-slides/"
+              >mgreenbe.github.io/latl-slides/</a
+            >
+          </div>
+        </section>
+        <section>
+          <h3 class="slide-heading">What is Tensorflow?</h3>
+          <blockquote cite="http://www.tensorflow.org">
+            "An end-to-end open source machine learning platform."
+            <br />
+            <div class="citation">
+              <a href="http://www.tensorflow.org">tensorflow.org</a>
+            </div>
+          </blockquote>
+        </section>
+        <section>
+          <h3 class="slide-heading">Tensorflow's strengths</h3>
+          <div class="points">
+            <div class="fragment">
+              <div class="leader">Versatility:</div>
+              <ul>
+                <li>Model development, training, inference</li>
+              </ul>
+            </div>
+            <div class="fragment">
+              <div class="leader">Performance:</div>
+              <ul>
+                <li>Implemented in C++</li>
+                <li>GPU acceleration</li>
+              </ul>
+            </div>
+            <div class="fragment">
+              <div class="leader">Usability:</div>
+              <ul>
+                <li>Consume using a Python or C++ API</li>
+                <li>High level <em>Keras</em> API for deep learning</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3 class="slide-heading">Ecosystem</h3>
+          <div class="points">
+            <div class="fragment">Libraries, extension, tooling</div>
+            <div class="fragment">Tensorflow lite for mobile/IOT</div>
+            <div class="fragment">
+              Tensorflow Extended for production deployments
+            </div>
+            <div class="fragment">
+              Officially curated and community contributed models and datasets
+            </div>
+            <div class="fragment">
+              Forums, blogs, Youtube channel, &gt; 46000 Stackoverflow questions
+              tagged "tensorflow", ...
+            </div>
+          </div>
+        </section>
+        <section>
+          <h3 class="slide-heading">Importing</h3>
+          <div class="points">
+            <div class="fragment">
+              We'll be using Tensorflow 2.0.
+            </div>
+            <div class="fragment">
+              On Colab:
+              <pre><code class="hljs python" data-trim>
+				%tensorflow_version 2.x
+		  </code></pre>
+            </div>
+            <div class="fragment">
+              Import as usual:
+              <pre><code class="hljs python" data-trim>
+				import tensorflow as tf
+		  </code></pre>
+            </div>
+            <div class="fragment">
+              Check your version:
+              <pre><code class="hljs python" data-trim>
+				print(tf.version.VERSION)
+		  </code></pre>
+              <pre><code class="hljs output" data-trim>
+			2.0.0
+		  </code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3 class="slide-heading">Tensors</h3>
+          <section>
+            <div class="points">
+              <div>
+                \(n\)-dimensional arrays of numbers.
+              </div>
+              <div class="fragment" data-fragment-index="0">
+                Construct them using <span class="code">tf.constant</span>.
+              </div>
+              <pre
+                class="fragment"
+                data-fragment-index="0"
+              ><code class="hljs python">a = tf.constant(3) # dtype=int32
+b = tf.constant([[3., 1., 4.], [1., 5., 9.]])
+print(a, b)
+print(b.__class__)</code></pre>
+              <pre
+                class="fragment"
+                data-fragment-index="0"
+              ><code class="hljs text output">tf.Tensor(3, shape=(), dtype=int32)
+tf.Tensor([[3. 1. 4.]
+	   [1. 5. 9.]], shape=(2, 3), dtype=float32)
+&ltclass &#39;tensorflow.python.framework.ops.EagerTensor&#39;></code></pre>
+              <span
+                class="fragment"
+                data-code-focus="1"
+                data-fragment-index="1"
+              ></span>
+              <span
+                class="fragment"
+                data-code-focus="1"
+                data-fragment-index="2"
+              ></span>
+              <span
+                class="fragment"
+                data-code-focus="1"
+                data-code-block="2"
+                data-fragment-index="2"
+              ></span>
+              <span
+                class="fragment"
+                data-code-focus="2"
+                data-fragment-index="3"
+              ></span>
+              <span
+                class="fragment"
+                data-code-focus="2"
+                data-fragment-index="4"
+              ></span>
+              <span
+                class="fragment"
+                data-code-focus="2-3"
+                data-code-block="2"
+                data-fragment-index="4"
+              ></span>
+              <span
+                class="fragment"
+                data-code-focus="4"
+                data-fragment-index="5"
+              ></span>
+              <span
+                class="fragment"
+                data-code-focus="4"
+                data-code-block="2"
+                data-fragment-index="5"
+              ></span>
+            </div>
+          </section>
+          <section>
+            <div>
+              Convert tensors to numpy arrays
+            </div>
+            <pre><code class="hljs python">c = b.numpy()
+print(c, c.__class__)</code></pre>
+            <pre><code class="hljs text output">[[3. 1. 4.]
+ [1. 5. 9.]] &lt;class &#39;numpy.ndarray&#39;></code></pre>
+            <div class="fragment" data-fragment-index="1">and vice-versa.</div>
+            <pre
+              class="fragment"
+              data-fragment-index="1"
+            ><code class="hljs python">d = tf.constant(c)
+print(d == b)</code></pre>
+            <pre
+              class="fragment"
+              data-fragment-index="1"
+            ><code class="hljs text output">tf.Tensor([[ True  True  True]
+           [ True  True  True]], shape=(2, 3), dtype=bool)</code></pre>
+          </section>
+          <section>
+            <div class="points">
+              <div>
+                Unlike Numpy arrays, tensors are <em>immutable</em>
+                <pre><code class="hljs text">b = tf.constant([3., 1., 4., 1., 5., 9.])
+b[0] = 4</code></pre>
+                <pre><code class="hljs text output">TypeError: 'tensorflow.python.framework.ops.EagerTensor' 
+           object does not support item assignment</code></pre>
+              </div>
+              <div class="fragment" data-fragment-index="1">
+                and can be backed by <em>GPU memory</em>.
+                <pre
+                  class="fragment"
+                  data-fragment-index="1"
+                ><code class="hljs python" data-trim>
+with tf.device("/device:GPU:0"):
+    a = tf.constant([3., 1., 4., 1., 5., 9.])
+    print(a.device)</code></pre>
+                <pre><code class="hljs output text" data-trim>
+								/job:localhost/replica:0/task:0/device:GPU:0
+																  </code></pre>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <h3 class="slide-heading">Variables</h3>
+          <div class="points">
+            <div>Variables are <em>mutable</em> tensors.</div>
+            <div class="fragment" data-fragment-index="1">
+              Typically contain <em>trainable</em> quantities, e.g. weights.
+            </div>
+            <div class="fragment" data-fragment-index="2">
+              Make variables by passing an initial value to the
+              <span class="code">tf.Variable</span> constructor:
+            </div>
+            <pre
+              class="fragment"
+              data-fragment-index="2"
+            ><code class="hljs python" data-trim>b = tf.Variable([3., 1., 4., 1., 5., 9.])
+b.assign_add(tf.ones_like(b))
+print(b)</code></pre>
+            <pre
+              class="fragment"
+              data-fragment-index="2"
+            ><code class="hljs output text" data-trim>&lt;tf.Variable &#39;Variable:0&#39; shape=(6,) dtype=float32,
+numpy=array([ 4.,  2.,  5.,  2.,  6., 10.], dtype=float32)></code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h3 class="slide-heading">
+            A simple training loop
+          </h3>
+          <section>
+            <div class="points">
+              <div class="fragment">
+                Let's do simple linear regression with Tensorflow.
+              </div>
+              <div class="fragment">
+                <div>Mock up some data:</div>
+                <pre><code class="hljs python" data-trim>a_true = tf.constant(-0.25) # intercept
+b_true = tf.constant(0.5)   # slope
+x = tf.random.uniform((96,))
+e = tf.random.normal((96,), 0, 0.1)
+y = a_true + b_true*x + e</code></pre>
+                <span class="fragment" data-code-focus="1-2"></span>
+                <span class="fragment" data-code-focus="3"></span>
+                <span class="fragment" data-code-focus="4"></span>
+                <span class="fragment" data-code-focus="5"></span>
+              </div>
+              <div class="fragment">
+                We want to fit a line to the dataset
+                <span class="code">(x, y)</span>.
+              </div>
+            </div>
+          </section>
+          <section>
+            <div class="points">
+              <div class="fragment">
+                <div>
+                  Select initial values for our
+                  <em>trainable parameters</em> &mdash; the intercept
+                  <span class="code">a</span> and the slope
+                  <span class="code">b</span>:
+                </div>
+                <pre><code class="hljs python" data-trim>a = tf.Variable(0.)
+b = tf.Variable(tf.random.uniform(()))
+					</code></pre>
+              </div>
+              <div class="fragment">
+                <div>Choose a <em>learning rate</em>.</div>
+                <pre><code class="hljs python" data-trim>lr = tf.constant(0.5)</code></pre>
+              </div>
+              <div class="fragment">
+                Write a <em>training loop</em> to perform
+                <em>gradient descent</em>.
+              </div>
+            </div>
+          </section>
+          <section>
+            <pre><code class="hljs python" data-trim>for epoch in range(100):                      # training loop
+    with tf.GradientTape() as t:
+        loss = tf.reduce_mean((a + b*x - y)**2)         # (*)
+        [dloss_da, dloss_db] = t.gradient(loss, [a, b])
+        a.assign_sub(lr*dloss_da)        # "a -= lr*dloss_da"
+        b.assign_sub(lr*dloss_db)
+
+print(a.numpy(), b.numpy())    # a_true = -0.25, b_true = 0.5</code></pre>
+            <pre><code class="hljs output text" data-trim>-0.2548124 0.5260704</code></pre>
+            <span class="fragment" data-code-focus="1"></span>
+            <span class="fragment" data-code-focus="3"></span>
+            <span class="fragment" data-code-focus="4"></span>
+            <span class="fragment" data-code-focus="5-6"></span>
+            <div class="fragment" data-code-focus="2">
+              <span class="code">tf.GradientTape()</span> is a
+              <em>context manager</em> that records details of computation
+              <span class="code">(*)</span> needed to compute gradients.
+              (Consider it an implemention detail.)
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <h3 class="slide-heading">A stochastic (batched) variant</h3>
+          <section>
+            <pre><code class="hljs python" data-trim>a_true = tf.constant(-0.25) # true intercept
+b_true = tf.constant(0.5)   # true slope
+
+x = tf.random.uniform((96,))
+e = tf.random.normal((96,), 0, 0.1) # errors in y
+y = a_true + b_true*x + e
+
+dataset = tf.data.Dataset.from_tensor_slices((x, y))
+</code></pre>
+            <div style="height: 240px">
+              <div class="fragment current-only points" data-code-focus="1-6">
+                <div>
+                  Same as previously. Mock up a dataset
+                  <span class="code">(x, y)</span> for the purpose of fitting a
+                  linear model.
+                </div>
+              </div>
+              <div class="fragment current-only points" data-code-focus="8">
+                <div>
+                  <span class="code">tf.data</span> contains functionality for
+                  building data pipelines.
+                </div>
+                <div>
+                  The <span class="code">tf.data.Dataset</span> class is
+                  optimized for large datasets.
+                </div>
+              </div>
+            </div>
+          </section>
+          <section>
+            <pre><code class="hljs python" data-trim>a = tf.Variable(0.) # initial intercept
+b = tf.Variable(tf.random.uniform(())) # initial slope
+lr = tf.constant(0.25) # learning rate
+
+for x, y in dataset.shuffle(96) \
+                   .repeat(100) \
+                   .batch(3):
+    with tf.GradientTape() as t:
+        loss = tf.reduce_mean((a + b*x - y)**2)
+        [dloss_da, dloss_db] = t.gradient(loss, [a, b])
+        a.assign_sub(lr*dloss_da) # "a -= lr*dloss_da"
+        b.assign_sub(lr*dloss_db)</code></pre>
+            <div style="height: 100px">
+              <div class="points fragment current-only" data-code-focus="1-3">
+                Choose initial values for trainable parameters. Select learning
+                rate.
+              </div>
+              <div class="points fragment current-only" data-code-focus="5-7">
+                <div>
+                  Loop through the dataset 100 times in 3 batches of 32 samples.
+                  Shuffle it before each iteration.
+                </div>
+              </div>
+              <div class="points fragment" data-code-focus="8-12">
+                <div>
+                  Same as previously. Compute loss for batch. Compute gradients.
+                  Update
+                  <span class="code">a</span> and <span class="code">b</span>.
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+        <section>
+          <h3 class="slide-heading">Keras</h3>
+          <div class="points">
+            <div class="fragment">
+              Tensorflow's high level API for deep learning.
+            </div>
+            <div class="fragment">
+              Powerful, modular, composable, extensible, user friendly, well
+              documented.
+            </div>
+            <div class="fragment">
+              Prefer it to Tensorflow's lower level API, where feasible.
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3 class="slide-heading">Keras models</h3>
+          <div class="points">
+            <div class="fragment">
+              A <span class="leader">Keras model</span> describes data flow
+              through <span class="leader">layers</span>.
+            </div>
+            <div class="fragment">
+              Each layer of a model encodes the
+              <span class="leader">weights</span> of its connections to
+              preceding layers.
+            </div>
+            <div class="fragment">
+              A <span class="leader">dense</span> layer has a unique weight for
+              each of these connections.
+            </div>
+            <div class="fragment">
+              <pre><code class="hljs python" data-trim>
+				from tensorflow.keras import Model, Sequential
+				from tensorflow.keras.layers import Dense, Input
+				</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <section>
+            <h3 class="slide-heading">A simple feedforward network</h3>
+            <div class="center-horizontally">
+              <svg id="simple-feedforward" width="900" height="400">
+                <g class="diagram" transform="translate(50 0)"></g>
+                <g class="labels fragment" transform="translate(50 0)"></g>
+              </svg>
+            </div>
+            <div class="fragment">
+              <pre><code class="hljs python" data-trim>
+				model = Sequential([Input(2), Dense(3), Dense(3), Dense(1)])
+				  </code></pre>
+            </div>
+          </section>
+          <section>
+            <h3 class="slide-heading">Model summary</h3>
+            <div>
+              <pre><code class="hljs python" data-trim>
+						  model.summary()
+							</code></pre>
+            </div>
+            <div class="fragment">
+              <pre><code class="hljs text output" data-trim>
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 3)                 9         
+_________________________________________________________________
+dense_1 (Dense)              (None, 3)                 12        
+_________________________________________________________________
+dense_2 (Dense)              (None, 1)                 4         
+=================================================================
+Total params: 25
+Trainable params: 25
+Non-trainable params: 0
+_________________________________________________________________</code></pre>
+            </div>
+          </section>
+
+          <section>
+            <h3 class="slide-heading">Layers</h3>
+            <div>
+              Layers are stored on the <span class="code">model.layers</span>
+            </div>
+            <pre><code class="hljs text output" data-trim>[&lt;tensorflow.python.keras.layers.core.Dense at 0x13f3a0f50>,
+  &lt;tensorflow.python.keras.layers.core.Dense at 0x13f3b5410>,
+  &lt;tensorflow.python.keras.layers.core.Dense at 0x13f3b5990>]</code></pre>
+            Easy to get input about a given layer:
+            <pre><code class="hljs python" data-trim>L = model.layers[0]
+  print(f"L.name = {layer.name}, L.units = {layer.units},
+          L.input_shape = {L.input_shape},
+          L.output_shape = {L.output_shape}")</code></pre>
+            <pre><code class="hljs text output" data-trim>L.name = dense, L.units = 3,
+L.input_shape = (None, 2), L.output_shape = (None, 3)</code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h3
+              class="slide-heading"
+              style="display: flex; justify-content: space-between"
+            >
+              <span style="display: block">Inference</span>
+              <span
+                style="color: papayawhip;"
+                class="fragment"
+                data-fragment-index="2"
+              >
+                model.predict
+              </span>
+            </h3>
+            <div>
+              <em>Inference</em> is the process of predicting
+              <span class="code">y</span> from <span class="code">x</span> by
+              propagating data forwards through the network.
+            </div>
+            <div
+              style="display: flex; justify-content: center; align-items: center"
+            >
+              <svg
+                id="simple-feedforward-vertical"
+                class="fragment"
+                data-fragment-index="0"
+                width="450"
+                height="400"
+                style="flex-grow: 1"
+              >
+                <g class="diagram" transform="translate(50 0)"></g>
+                <g class="labels fragment" transform="translate(50 0)"></g>
+              </svg>
+              <div style="flex-grow: 1">
+                <pre
+                  class="fragment"
+                  data-fragment-index="2"
+                ><code class="hljs python" data-trim>tf.random.set_seed(666)
+x = tf.random.uniform((4, 2))
+y_pred = model.predict(x)</code></pre>
+                <pre
+                  class="fragment"
+                  data-fragment-index="3"
+                ><code class="hljs text output" data-trim>
+x = [[0.7861 0.4992]
+     [0.2993 0.8064]
+     [0.8418 0.4165]
+     [0.0332 0.8668]],
+
+y_pred = [[ 0.5011]
+          [-1.06  ]
+          [ 0.7761]
+          [-1.695 ]]
+</code></pre>
+              </div>
+            </div>
+          </section>
+          <section>
+            <h3 class="slide-heading">Understanding inference</h3>
+            <div
+              style="display: flex; flex-direction: column; align-items: center;"
+            >
+              <div>
+                A unit computes a <em>weighted sum</em> of its input values.
+              </div>
+              <div>
+                <pre
+                  style="margin-bottom: 0px;"
+                ><code class="hljs python" data-trim>layers[0].get_weights()</code></pre>
+                <div class="fake-code">
+                  [array([[<span
+                    class="fragment highlight-current-green"
+                    data-fragment-index="0"
+                    >0.8815</span
+                  >,
+                  <span
+                    class="fragment highlight-current-green"
+                    data-fragment-index="1"
+                    >-1.0451</span
+                  >,
+                  <span
+                    class="fragment highlight-current-green"
+                    data-fragment-index="2"
+                    >-0.9774]</span
+                  >,<br />
+                  <span style="visibility: hidden">aaaaaaa</span>
+                  [<span
+                    class="fragment highlight-current-green"
+                    data-fragment-index="3"
+                    >1.0588</span
+                  >,
+                  <span
+                    class="fragment highlight-current-green"
+                    data-fragment-index="4"
+                    >-0.1274</span
+                  >,
+                  <span
+                    class="fragment highlight-current-green"
+                    data-fragment-index="5"
+                    >0.4328</span
+                  >]], dtype=float32),<br />
+                  <span style="visibility: hidden">a</span>array([<span
+                    class="fragment highlight-current-green"
+                    data-fragment-index="6"
+                    >0.</span
+                  >,
+                  <span
+                    class="fragment highlight-current-green"
+                    data-fragment-index="7"
+                    >0.</span
+                  >,
+                  <span
+                    class="fragment highlight-current-green"
+                    data-fragment-index="8"
+                    >0.</span
+                  >], dtype=float32)]
+                </div>
+              </div>
+              <svg
+                id="simple-feedforward-highlight"
+                data-fragment-index="1"
+                width="800"
+                height="400"
+                style="flex-grow: 1"
+              >
+                <g class="diagram" transform="translate(50 0)"></g>
+                <g class="labels fragment" transform="translate(50 0)"></g>
+              </svg>
+            </div>
+          </section>
+
+          <section>
+            <div class="fragment">
+              Weighted sums are computed by <em>matrix multiplication</em>:
+            </div>
+            <div class="fragment" style="display: flex">
+              <pre
+                style="flex-grow: 1; margin-right: 20px;"
+              ><code class="hljs python" data-trim>weights = [layer.get_weights() for layer in layers]
+
+y = x
+for [w, b] in weights:
+    y = y @ w + b</code></pre>
+              <pre><code class="hljs text output">y = [[ 0.5011]
+     [-1.06  ]
+     [ 0.7761]
+     [-1.695 ]]
+
+</code></pre>
+            </div>
+            <div class="fragment">Layers are <em>callable</em>:</div>
+            <div class="fragment" style="display: flex">
+              <pre
+                style="flex-grow: 1; margin-right: 20px;"
+              ><code class="hljs python">z = x
+for layer in layers:                               
+    z = layer(z)
+  </code></pre>
+              <pre><code class="hljs text output" data-trim>z = [[ 0.5011]
+     [-1.06  ]
+     [ 0.7761]
+     [-1.695 ]]</code></pre>
+            </div>
+            <div class="fragment">
+              <span class="code">y</span> and <span class="code">z</span> are
+              both equal to <span class="code">y_pred = model.predict(x)</span>.
+            </div>
+          </section>
+          <section>
+            <div class="points">
+              <div class="fragment">Wait a second...</div>
+              <div class="fragment" style="display: flex">
+                <pre
+                  style="flex-grow: 1; margin-right: 20px;"
+                ><code class="hljs python">[[w1, b1], [w2, b2], [w3, b3]] = weights
+
+w = w1 @ w2 @ w3
+b = b1 @ w2 @ w3 + b2 @ w3 + b3
+y = x @ w + b
+</code></pre>
+                <pre><code class="hljs text output">y = [[ 0.5011]
+     [-1.06  ]
+     [ 0.7761]
+     [-1.695 ]]
+
+</code></pre>
+              </div>
+              <div class="fragment">The model is linear! (Did you notice?)</div>
+              <div class="fragment">
+                To go beyond linear models, we need nonlinear
+                <em>activation functions</em>.
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <h3 class="slide-heading">Activation functions</h3>
+          <section>
+            <div class="points">
+              <div>
+                Given input <span class="code">\(x\)</span>, the output of a
+                typical dense layer is
+                <span class="code">\[ y = h(xW + b), \]</span> where
+                <span class="code">\(W\)</span>,
+                <span class="code">\(b\)</span>, and
+                <span class="code">\(h\)</span> are its weight matrix, bias
+                vector, and activation function, respectively.
+              </div>
+
+              <pre><code class="hljs python" data-trim>import tensorflow.keras.activations</code></pre>
+            </div>
+          </section>
+          <section>
+            <table style="width: 100%; font-size: 70%;">
+              <thead>
+                <td>Name</td>
+                <td>Shorthand</td>
+                <td>Formula</td>
+                <td>Use</td>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>identity</td>
+                  <td><span class="code">linear</span></td>
+                  <td><span class="code">$h(x)=x$</span></td>
+                  <td>output layer in regression problems</td>
+                </tr>
+                <tr>
+                  <td>sigmoid</td>
+                  <td><span class="code">sigmoid</span></td>
+                  <td>
+                    <span class="code">$h(x)=\dfrac{1}{1 + e^{-x}}$</span>
+                  </td>
+                  <td>output layer in two-class classification problems</td>
+                </tr>
+                <tr>
+                  <td>softmax</td>
+                  <td><span class="code">softmax</span></td>
+                  <td>
+                    <span class="code"
+                      >$h_i(x)=\dfrac{e^{x_i}}{\sum_{j=1}^K e^{x_j}}$</span
+                    >
+                  </td>
+                  <td>output layer in $K$-class classification problems</td>
+                </tr>
+                <tr>
+                  <td>rectified linear unit (ReLU)</td>
+                  <td><span class="code">relu</span></td>
+                  <td><span class="code">$h(x)=\max(x, 0)$</span></td>
+                  <td>hidden layers of deep networks</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          <section>
+            <div>
+              You can add an activation to a layer using the
+              <span class="code">activation</span> keyword argument in its
+              constructor.
+            </div>
+            <pre><code style="max-height: 500px" class="hljs python" data-trim>model = Sequential([Input(2),
+    Dense(10, activation="relu"),
+    Dense(10, activation="relu"),
+    Dense(1, activation="sigmoid")])</code></pre>
+            <div class="fragment">
+              <div>Alternatively, you can add an activation "layer".</div>
+              <pre><code style="max-height: 500px" class="hljs python" data-trim>model = Sequential([Input(2),
+    Dense(10), Activation("relu"),
+    Dense(10), Activation("relu"), 
+    Dense(1), Activation("sigmoid")])</code></pre>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3 class="slide-heading">Losses and optimizers</h3>
+            <div>Learning algorithm = Model + Loss + Optimizer</div>
+          </section>
+          <section>
+            <h3 class="slide-heading">Loss functions</h3>
+            <div class="points">
+              <div>
+                Training a neural network means minimizing an appropriate
+                <em>loss function</em>.
+              </div>
+              <table style="width: 100%; font-size: 65%;">
+                <thead>
+                  <td>Name</td>
+                  <td>Shorthand</td>
+                  <td>Use</td>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Mean squared error</td>
+                    <td><span class="code">mse</span></td>
+                    <td>regression problems,<br />continuous response</td>
+                  </tr>
+                  <tr>
+                    <td>Binary cross-entropy</td>
+                    <td><span class="code">binary_crossentropy</span></td>
+                    <td>two-class classification problems</td>
+                  </tr>
+                  <tr>
+                    <td>Categorical cross-entropy</td>
+                    <td><span class="code">categorical_crossentropy</span></td>
+                    <td>$K$-class classification problems</td>
+                  </tr>
+                </tbody>
+              </table>
+              <pre><code class="hljs python" data-trim>import tensorflow.keras.losses</code></pre>
+            </div>
+          </section>
+
+          <section>
+            <h3 class="slide-heading">Optimizers</h3>
+            <div class="points">
+              <div>
+                All variants of <em>stochastic gradient descent</em> (<span
+                  class="code"
+                  >sgd</span
+                >).
+              </div>
+              <div>
+                They all have tuneable parameters, the most important being
+                <em>learning rate</em> (<span class="code">lr</span>).
+              </div>
+              <pre><code style="max-height: 500px" class="hljs python" data-trim>from tensorflow.keras.optimizers import SGD
+
+optimizer = SGD(lr=0.005) # default lr = 0.01</code></pre>
+            </div>
+          </section>
+          <section>
+            <h3 class="slide-heading">Compiling a model</h3>
+            <div class="points">
+              <div>
+                We endow a model with a loss function and an optimizer by
+                <em>compiling</em> it.
+              </div>
+              <pre><code class="hljs python" data-trim>model.compile(loss="mse", optimizer="sgd")</code></pre>
+              <pre><code class="hljs python" data-trim>model.compile(loss="binary_crossentropy",
+              optimizer=SGD(lr=0.005))</code></pre>
+              <div>A compiled model is ready for training.</div>
+            </div>
+          </section>
+
+          <section>
+            <h3 class="slide-heading">Metrics</h3>
+            <div class="points">
+              <div class="fragment">
+                <em>Metrics</em> are measurements measure quality of fit.
+              </div>
+              <div class="fragment">
+                Loss functions are metrics. Other metrics might also be of
+                interest, though.
+              </div>
+              <div class="fragment">
+                The main examples of auxilliary metrics are
+                <em>training accuracy</em> and <em>validation accuracy</em>.
+              </div>
+              <div class="fragment">
+                <div>
+                  Specify the metrics you want trackded in the
+                  <span class="code">metrics</span> kwarg of your model's
+                  <span class="code">compile</span> method.
+                </div>
+                <pre
+                  class="fragment"
+                ><code class="hljs python" data-trim>model.compile(loss="binary_crossentropy",
+              optimizer="adam",
+              metrics=["accuracy"])</code></pre>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <h3 class="slide-heading">Training a model</h3>
+          <div class="points">
+            <div>
+              Train a model using its <span class="code">fit</span> method.
+            </div>
+            <div>
+              You need to provide <em>training data</em>,
+              <span class="code">(x, y).</span>
+            </div>
+            <div>
+              You can specify the number of <span class="code">epochs</span> to
+              train (<span class="code">epochs</span>),
+              <em>batch size</em> (<span class="code">batch_size</span>), a
+              <em>validation split</em> or <em>dataset</em> (<span class="code"
+                >validation_data</span
+              >, <span class="code">validation_split</span>), and a sequence of
+              <em>callbacks</em> (<span class="code">callbacks</span>) in their
+              respective kwargs.
+            </div>
+            <pre><code class="hljs python" data-trim>model.fit(x_train, y_train,
+          epochs=20,
+          batch_size=64,
+          validation_split=0.2)</code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h3 class="slide-heading">Learning planar regions</h3>
+          <section>
+            <div class="points">
+              <div>
+                Let's train a neural network to determine whether a random point
+                in the unit square lies in the outer blue region or the inner
+                red region.
+              </div>
+            </div>
+            <div style="display: flex; justify-content: center;">
+              <img
+                src="squares.svg"
+                width="400"
+                height="400"
+                style="border: none; margin: 0px; background-color:#191919"
+              />
+            </div>
+          </section>
+          <section>
+            <div class="points">
+              <div>
+                Generate a <em>training set</em> of 512 randomly chosen points
+                from the unit square, labelled accordingly.
+              </div>
+            </div>
+            <div
+              style="display: flex; justify-content: center; align-items: center;"
+            >
+              <img
+                src="squares-samples.svg"
+                width="400"
+                height="400"
+                style="border: none; margin: 0px; background-color:#191919"
+              />
+              <div style="flex-grow: 1;">
+                <pre><code class="hljs python" data-trim>a = 1/np.sqrt(8)
+
+x_train = np.random.uniform(
+    size=(512, 2))
+    
+y_train = np.logical_and(
+    np.abs(x_train[:,0] - 0.5) &lt; a,
+    np.abs(x_train[:,1] - 0.5) &lt; a))</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <section style="height: 500px;">
+            <div
+              style="display: flex; justify-content: center; align-items: center;"
+            >
+              <img
+                src="regions.gif"
+                width="400"
+                height="400"
+                style="border: none; margin: 0px; background-color:#191919"
+              />
+              <div style="flex-grow: 2;">
+                <pre><code class="hljs python" data-trim>model = Sequential([Input(2),
+Dense(10, activation="relu"),
+Dense(10, activation="relu"),
+Dense(1, activation="sigmoid")])
+
+model.compile(
+  loss="binary_crossentropy",
+  optimizer="adam",
+  metrics=["accuracy"])
+
+model.fit(x_train, y_train, 
+  epochs=500)
+
+model.evaluate(x_test, y_test)</code></pre>
+                <pre><code class="hljs text output" data-trim>[0.100700, 0.9628906]</code></pre>
+              </div>
+            </div>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h3 class="slide-heading">Saving models</h3>
+            <div class="points">
+              <div>
+                The <span class="code">Model</span> class has a
+                <span class="code">save</span> method.
+              </div>
+              <div>
+                This saves your model &mdash; both architecture the weights
+                &mdash; in <span class="code">hdf5</span> format (<span
+                  class="code"
+                  >.h5</span
+                >), optimized for storing multidimensional array data.
+              </div>
+              <div>
+                If you forget the <span class="code">.h5</span> extension, your
+                model will be saved in
+                <span class="code">protobuf</span> (protocol buffer) format.
+              </div>
+              <div>
+                You'll run into protocol buffers if you work with non-Keras
+                tensorflow models.
+              </div>
+              <pre><code class="hljs python" data-trim>model.save("squares.h5")</code></pre>
+            </div>
+          </section>
+          <section>
+            <h3 class="slide-heading">Loading models</h3>
+            <div class="points">
+              <div>
+                The <span class="code">tensorflow.keras.models</span> module
+                contains a <span class="code">load_model</span> function:
+              </div>
+              <pre><code class="hljs python" data-trim>from tensorflow.keras.models import load_model
+
+model = load_model("square.h5")</code></pre>
+              <div>
+                Keras comes with many useful built-in models. They're located in
+                <span class="code">tensorflow.keras.applications</span>.
+              </div>
+              <pre><code class="hljs python" data-trim>from tensorflow.keras.applications.vgg16 import VGG16</code></pre>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <h3 class="slideheading">Colab notebooks</h3>
+          <div class="points">
+            <div>
+              <a
+                href="https://colab.research.google.com/drive/1btyfaYJjWwOgsn8E6tKXpifVNTnYIXzY"
+                >Pretrained networks</a
+              >
+            </div>
+            <div>
+              <a
+                href="https://colab.research.google.com/drive/1ZMqDw-5b1dGxWv9wNF3CkQBW_jDsYlRr"
+                >Transfer learning</a
+              >
+            </div>
+            <div>
+              <a
+                href="https://colab.research.google.com/drive/1oQf5NYknZaLzMKiTr5ZfjDlIdfdYrKyC"
+                >Naive image denoising</a
+              >
+            </div>
+            <div>
+              <a
+                href="https://colab.research.google.com/drive/1XPzXKQQL0q65UldEu99DZm2L5c_7PTpM"
+                >Training loop for simple linear regression</a
+              >
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script type="module" src="simpleFeedforward.js"></script>
+    <script type="module" src="simpleFeedforwardVertical.js"></script>
+    <script type="module" src="simpleFeedforwardHighlight.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        history: true,
+        dependencies: [
+          { src: "plugin/markdown/marked.js" },
+          { src: "plugin/markdown/markdown.js" },
+          { src: "plugin/math/math.js" },
+          { src: "plugin/notes/notes.js", async: true },
+          { src: "plugin/highlight/highlight.js", async: true },
+          {
+            src: "node_modules/reveal-code-focus/reveal-code-focus.js",
+            async: true,
+            callback: function() {
+              RevealCodeFocus();
+            }
+          }
+        ]
+      });
+    </script>
+  </body>
+</html>
